@@ -1,13 +1,4 @@
 from palabra import Palabra
-import os
-
-"""actual_path = os.path.join(os.path.dirname(__file__),"words.txt")
-
-with open(actual_path) as f:
-    arr = f.readlines()"""
-
-
-#arr = ["trip", "jobs", "wars", "swap", "real", "team", "vast", "tank", "loss", "sent", "coma", "salt", "draw", "came", "show"]
 
 palabras = []
 
@@ -49,12 +40,3 @@ def compararLetras(word: str, palabra: str) -> int:
             if word[i] == palabra[i]:
                 contador +=1
     return contador
-
-
-
-#insert(arr)
-
-#ejem = seleccion("market", 2, palabras)
-
-#ejem = seleccion("goal", 2, ejem)
-#show(ejem)
