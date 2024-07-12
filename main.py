@@ -1,42 +1,50 @@
-from palabra import Palabra
+import tkinter as tk
+from tkinter import Tk
+import brain as b
 
-palabras = []
+class Interface:
 
-def insert(arr):
-    palabras = []
-    for i in arr:
-        pal = Palabra(i, 0)
-        palabras.append(pal)
-    return palabras
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Terminal")
+        self.principalFrame = tk.Frame(root)
 
-def show(palabras: list[Palabra]):
-    for i in palabras:
-        print("Palabra: ", i.palabra, " Coincidencias: " , i.coincidencia)
+        self.clavesText = tk.Text(self.root, autoseparators=True, border=0.5, width=40, height=10)
+        self.clavesText.grid(row=0, padx=10, pady=10, columnspan=3)
+        self.clavesText.bind("<<Modified>>", self.toggle_button)
 
-def seleccion(word: str, coin: int, palabras: list):
-    aux = []
-    compare(word, palabras)
-    if coin == 0:
-        for i in palabras:
-            if i.coincidencia == 0:
-                aux.append(i)
-    else:
-        for i in palabras:
-            if i.coincidencia >= coin and not (i.coincidencia == len(word)):
-                aux.append(i)
-    palabras = aux
-    return palabras
+        self.claveEntry = tk.Entry(self.root)
+        self.claveEntry.grid(row=1, column=0, padx=2, pady=2)
+        self.similitudEntry = tk.Entry(self.root)
+        self.similitudEntry.grid(row=1, column=2, padx=2, pady=2)
+        
+        self.iniciarButton = tk.Button(self.root, text="Iniciar", state=tk.DISABLED, command=self.extraerBoton)
+        self.iniciarButton.grid(row=2, column=1, padx=2, pady=2)
 
 
-def compare(word: str, palabras: list):
-    for i in palabras:
-        contador = 0
-        contador = compararLetras(word, i.palabra)
-        i.coincidencia = contador
+    def toggle_button(self, event):
+        # Obtener el contenido del Text widget
+        content = self.clavesText.get("1.0", tk.END).strip()
+        # Habilitar o deshabilitar el botón basado en el contenido del Text widget
+        if content:
+            self.iniciarButton.config(state=tk.NORMAL)
+        else:
+            self.iniciarButton.config(state=tk.DISABLED)
 
-def compararLetras(word: str, palabra: str) -> int:
-    contador = 0
-    for i in range( len(word) ):
-            if word[i] == palabra[i]:
-                contador +=1
-    return contador
+    def extraerBoton(self):
+        content = self.clavesText.get("1.0", tk.END).rstrip()
+        lista = content.split("\n")
+        print(lista)
+        palabras = b.insert(lista)
+        palabras = b.seleccion(self.claveEntry.get(), int(self.similitudEntry.get()), palabras)
+
+        texto = "\n".join([word.palabra for word in palabras])
+        self.clavesText.delete("1.0", tk.END)
+        self.clavesText.insert(tk.END, texto)
+
+
+if __name__ == "__main__":
+    root = Tk()
+    root.wm_attributes("-topmost", True)
+    app = Interface(root)
+    root.mainloop()
